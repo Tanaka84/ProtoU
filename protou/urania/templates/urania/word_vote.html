@@ -1,0 +1,77 @@
+<div id= inicio> 
+    <p>blah blah blah</p>
+    <a href="javascript:inicio()">Votar</a>
+    </div>
+    <div id= voting style="display: none">
+    <p id=palabra></p>
+    <button type="button" onclick="javascript:add_vote(1)">Muy Negativa</button> 
+    <button type="button" onclick="javascript:add_vote(2)">Negativa</button> 
+    <button type="button" onclick="javascript:add_vote(3)">Neutra</button> 
+    <button type="button" onclick="javascript:add_vote(4)">Postiva</button> 
+    <button type="button" onclick="javascript:add_vote(5)">Muy Positiva</button> 
+    </div>
+    
+    <div id= finalcheck style="display: none">
+        <p>Tus respuestas fueron: </p>
+        <ul>
+        {% for w in words%}    
+        <li>{{w.word}}: <span id="{{forloop.counter0}}"></span></li>  
+        {%endfor%}
+        </ul>
+        <form method = post action= ''> 
+        {% csrf_token %}
+        <button type = "submit" id = "votar" name = "votos" value = ''>Enviar votos</button>
+        </form>
+        <button type = "button" onclick="window.location.reload();">Corregir</button>
+        </div>
+    
+    
+    
+    <script>
+    
+    /* Define global variable */
+    var word_array = [];
+    var word_id_array = [];
+    {%for w in words%}
+    word_array.push('{{w.word}}'); 
+    {%endfor%}
+    {%for w in words%}
+    word_id_array.push('{{w.id}}'); 
+    {%endfor%}
+    var counter = 1;
+    var vote_array = [];
+    var vote_results = [];
+    
+    /* start voting */
+    function inicio(){
+    document.getElementById("inicio").style.display = 'none';
+    document.getElementById("voting").style.display = "block";
+    document.getElementById("palabra").innerHTML = word_array[0];
+    }
+    
+    /*add a vote*/
+    function add_vote(vote){
+        vote_array.push(word_id_array[counter-1]+": "+vote);
+        vote_results[word_array[counter-1]] = vote;
+        if (counter < 10) {    
+            document.getElementById("palabra").innerHTML = word_array[counter];
+            ++counter;
+        }
+        else {
+            finalizar()
+        };
+        };
+    
+    function finalizar(){
+        console.log(vote_array.join())
+        document.getElementById("voting").style.display = 'none';
+        document.getElementById("finalcheck").style.display = "block"; 
+        var i;
+        for(i=0;i < 10 ;i++){
+            document.getElementById(i).innerHTML = vote_results[word_array[i]]
+            };
+            document.getElementById('votar').value = vote_array;    
+        }
+    
+    </script>
+    
